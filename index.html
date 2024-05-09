@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="style.css">
+	<title>Document</title>
+</head>
+<body>
+	<picture>
+		<source src="images/bg-mobile-light.jpg" media="(max-width:600px)"/>
+		<img src="images/bg-desktop-light.jpg" alt="">
+	</picture>
+	<main>
+		<header>
+			<h1>TODO</h1>
+			<img class="cross-icon" src="images/icon-sun.svg" alt="">
+		</header>
+		<div class="input-container">
+			<div class="circle"></div>
+			<input type="text" placeholder="Create a new todo...">
+		</div>
+		<section>
+			<article class="active">
+				<div class="circle">
+					<img src="images/icon-check.svg" alt="">
+				</div>
+				<span>Complete online JavaScript course</span>
+				<img class="cross-icon" src="images/icon-cross.svg" alt="">
+			</article>
+			<article>
+				<div class="circle">
+					<img src="images/icon-check.svg" alt="">
+				</div>
+				<span>Jog around the park 3x</span>
+				<img class="cross-icon" src="images/icon-cross.svg" alt="">
+			</article>
+			<article>
+				<div class="circle">
+					<img src="images/icon-check.svg" alt="">
+				</div>
+				<span>10 minutes meditation</span>
+				<img class="cross-icon" src="images/icon-cross.svg" alt="">
+			</article>
+			<article>
+				<div class="circle">
+					<img src="images/icon-check.svg" alt="">
+				</div>
+				<span>Read for 1 hour</span>
+				<img class="cross-icon" src="images/icon-cross.svg" alt="">
+			</article>
+			<article>
+				<div class="circle">
+					<img src="images/icon-check.svg" alt="">
+				</div>
+				<span>Pick up groceries</span>
+				<img class="cross-icon" src="images/icon-cross.svg" alt="">
+			</article>
+			<article>
+				<div class="circle">
+					<img src="images/icon-check.svg" alt="">
+				</div>
+				<span>Complete Todo App on Frontend Mentor</span>
+				<img class="cross-icon" src="images/icon-cross.svg" alt="">
+			</article>
+			<aside>
+				<span>5 items left</span>
+				<span>Clear Completed</span>
+			</aside>
+		</section>
+		<aside>
+			<div>
+				<span>All</span>
+				<span>Active</span>
+				<span>Completed</span>
+			</div>
+		</aside>
+		<p>Drag and drop to reorder list</p>
+	</main>
+
+	<script src="script.js"></script>
+</body>
+</html>
