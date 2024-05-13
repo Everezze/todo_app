@@ -87,10 +87,10 @@ input.addEventListener("keydown",function(event){
 });
 
 const resObserv = new ResizeObserver(entries => {
-	console.log("entered resize event");
-	console.log(tasksSection.nextElementSibling);
+	//console.log("entered resize event");
+	//console.log(tasksSection.nextElementSibling);
 	for(let entry of entries){
-		if(entry.contentRect.width > 600){
+		if(entry.contentRect.width >= 652){
 			taskCompletedCleaner.parentElement.insertBefore(filterContainer,taskCompletedCleaner);
 		}
 		else{
@@ -99,3 +99,31 @@ const resObserv = new ResizeObserver(entries => {
 	}
 });
 resObserv.observe(main);
+
+function mouseMove(e){
+	e.currentTarget.hidden = true;
+	console.log("e.target: ",e.target);
+	let articleBelow = document.elementFromPoint(e.clientX,e.clientY);
+	console.log("article below: ",articleBelow);
+	//e.stopPropagation();
+	let left = parseInt(elementStyles.left);
+	let top = parseInt(elementStyles.top);
+	e.currentTarget.style.left = `${left + e.movementX}px`;
+	e.currentTarget.style.top = `${top + e.movementY}px`;
+}
+
+articles.forEach(function(element){
+	element.addEventListener("mousedown",function(e){
+		//e.stopPropagation();
+		console.log(e.currentTarget);
+		element.classList.add("dragging");
+		element.addEventListener("mousemove",mouseMove);
+	});
+
+	element.addEventListener("mouseup",function(){
+		element.classList.remove("dragging");
+		element.style.left= "initial";
+		element.style.top= "initial";
+		element.removeEventListener("mousemove",mouseMove);
+	});
+});
