@@ -101,11 +101,14 @@ const resObserv = new ResizeObserver(entries => {
 resObserv.observe(main);
 
 function mouseMove(e){
-	e.currentTarget.hidden = true;
+	//e.currentTarget.setAttribute("hidden",true);
+	e.currentTarget.hidden=true;
 	console.log("e.target: ",e.target);
 	let articleBelow = document.elementFromPoint(e.clientX,e.clientY);
 	console.log("article below: ",articleBelow);
+	//console.log("X: ",e.clientX,"Y: ",e.clientY);
 	//e.stopPropagation();
+	let elementStyles = window.getComputedStyle(e.target);
 	let left = parseInt(elementStyles.left);
 	let top = parseInt(elementStyles.top);
 	e.currentTarget.style.left = `${left + e.movementX}px`;
@@ -117,13 +120,18 @@ articles.forEach(function(element){
 		//e.stopPropagation();
 		console.log(e.currentTarget);
 		element.classList.add("dragging");
-		element.addEventListener("mousemove",mouseMove);
+		articles.forEach(function(element){
+			element.addEventListener("mousemove",mouseMove);
+		});
 	});
 
 	element.addEventListener("mouseup",function(){
 		element.classList.remove("dragging");
 		element.style.left= "initial";
 		element.style.top= "initial";
-		element.removeEventListener("mousemove",mouseMove);
+		//element.removeEventListener("mousemove",mouseMove);
+		articles.forEach(function(element){
+			element.removeEventListener("mousemove",mouseMove);
+		});
 	});
 });
