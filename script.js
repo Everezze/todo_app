@@ -13,8 +13,15 @@ const input = document.querySelector("input");
 const main = document.querySelector("main");
 const secondAside = document.querySelector("main > asidel");
 
+let preventClick = false;
+
 function addActive(element){
 	element.addEventListener("click",function(){
+		if(preventClick){
+			preventClick=false;
+			console.log("entered this preventing click event");
+			return null;
+		}
 		element.parentElement.classList.toggle("active");
 	});
 };
@@ -29,13 +36,17 @@ function enableCompletedFilter(){
 	tasksSection.classList.remove("active-filter");
 };
 
-function enableallFilter(){
+function enableAllFilter(){
 	tasksSection.classList.remove("completed-filter");
 	tasksSection.classList.remove("active-filter");
 };
 
 function enableRemoveArticle(element){
 	element.addEventListener("click",function(){
+		if(preventClick){
+			preventClick=false;
+			return;
+		}
 		let articleToRemove = this.parentElement;
 		articleToRemove.parentElement.removeChild(articleToRemove);
 	});
@@ -60,6 +71,8 @@ function createArticle(input){
 	article.appendChild(span);
 	article.appendChild(crossIcon);
 	articles.push(article);
+	article.addEventListener("mousedown",enableDragging);
+	article.addEventListener("mouseup",disableDragging);
 	
 	return article;
 }
@@ -75,7 +88,7 @@ taskCompletedCleaner.addEventListener("click",function(){
 });
 activeFilter.addEventListener("click", enableActiveFilter);
 completedFilter.addEventListener("click", enableCompletedFilter);
-allFilter.addEventListener("click",enableallFilter);
+allFilter.addEventListener("click",enableAllFilter);
 crossIcons.forEach(enableRemoveArticle);
 
 input.addEventListener("keydown",function(event){
@@ -100,38 +113,103 @@ const resObserv = new ResizeObserver(entries => {
 });
 resObserv.observe(main);
 
+let prevArticle = "";
+let usedDragging = false;
 function mouseMove(e){
-	//e.currentTarget.setAttribute("hidden",true);
-	e.currentTarget.hidden=true;
-	console.log("e.target: ",e.target);
-	let articleBelow = document.elementFromPoint(e.clientX,e.clientY);
-	console.log("article below: ",articleBelow);
-	//console.log("X: ",e.clientX,"Y: ",e.clientY);
-	//e.stopPropagation();
-	let elementStyles = window.getComputedStyle(e.target);
+	let elementStyles = window.getComputedStyle(e.currentTarget);
 	let left = parseInt(elementStyles.left);
 	let top = parseInt(elementStyles.top);
 	e.currentTarget.style.left = `${left + e.movementX}px`;
 	e.currentTarget.style.top = `${top + e.movementY}px`;
+	//e.currentTarget.setAttribute("hidden",true);
+	//INSTEAD OF USING HIDDEN(DOESNT WORK FOR WHATEVER REAON), I CAN USE
+	//Z-INDEX=-1 OR VISIBILITY=NONE. TRY AND SEE WHICH ONE WORKS THE BEST.
+	//e.currentTarget.hidden=true;
+	e.currentTarget.classList.add("dragging");
+	if(e.target.tagName != "ARTICLE"){
+		preventClick = true;
+	};
+	e.currentTarget.style.visibility="hidden";
+	let articleBelow = document.elementFromPoint(e.clientX,e.clientY);
+	e.currentTarget.style.visibility="visible";
+	if(articleBelow.tagName == "SECTION" && prevArticle){
+		console.log("prev article :",prevArticle);
+		articleBelow = prevArticle;
+		console.log("section before =>",articleBelow);
+	}
+	if(articleBelow.tagName == "SPAN" || articleBelow.tagName == "IMG" || articleBelow.tagName == "DIV"){
+		articleBelow = articleBelow.parentElement;
+	};
+	if(e.target.tagName == "ARTICLE" && articleBelow.tagName == "ARTICLE"){
+		if(!prevArticle){
+			prevArticle = articleBelow;
+			console.log("prev article added first time :",prevArticle);
+		}
+		else if(prevArticle !== articleBelow){
+			prevArticle.style.margin = "0";
+			prevArticle = articleBelow;
+		}
+		//console.log("dragged el rect top : ", e.target.getBoundingClientRect().top);
+		//console.log("below el rect top : ", articleBelow.getBoundingClientRect().top);
+		let targetRect = e.target.getBoundingClientRect();
+		let belowElRect = articleBelow.getBoundingClientRect();
+		if(targetRect.top <= belowElRect.top + belowElRect.height * .10){
+			articleBelow.style.marginTop = `${targetRect.height}px`;
+			articleBelow.style.marginBottom = `0`;
+		}
+		else if(targetRect.bottom >= belowElRect.bottom - belowElRect.height * .10){
+			articleBelow.style.marginBottom = `${targetRect.height}px`;
+			articleBelow.style.marginTop = `0`;
+		}
+	}
+	if(!usedDragging){
+		usedDragging=true;
+	}
+	//console.log("X: ",e.clientX,"Y: ",e.clientY);
+	//e.stopPropagation();
 }
 
-articles.forEach(function(element){
-	element.addEventListener("mousedown",function(e){
-		//e.stopPropagation();
-		console.log(e.currentTarget);
-		element.classList.add("dragging");
-		articles.forEach(function(element){
-			element.addEventListener("mousemove",mouseMove);
-		});
-	});
+function enableDragging(e){
+	e.currentTarget.addEventListener("mousemove",mouseMove);
+};
 
-	element.addEventListener("mouseup",function(){
-		element.classList.remove("dragging");
-		element.style.left= "initial";
-		element.style.top= "initial";
-		//element.removeEventListener("mousemove",mouseMove);
-		articles.forEach(function(element){
-			element.removeEventListener("mousemove",mouseMove);
-		});
-	});
+function disableDragging(e){
+	console.log(prevArticle.style.marginBottom);
+	if(usedDragging){
+		if(prevArticle.style.marginTop != "0px"){
+			console.log("inserting before prevArticle!!!")
+			tasksSection.insertBefore(e.currentTarget,prevArticle);
+		}
+		else if(prevArticle.style.marginBottom != "0px"){
+			console.log("inserting after prevArticle...");
+			tasksSection.insertBefore(e.currentTarget,prevArticle.nextElementSibling);
+		}
+		prevArticle.style.margin = "0";
+		e.currentTarget.classList.remove("dragging");
+		e.currentTarget.style.left="initial";
+		e.currentTarget.style.top="initial";
+		e.currentTarget.removeEventListener("mousemove",mouseMove);
+	}
+};
+
+articles.forEach(function(element){
+	element.addEventListener("mousedown",enableDragging);
+//		//e.stopPropagation();
+//		console.log(e.currentTarget);
+//		console.log(element);
+//		element.classList.add("dragging");
+//		articles.forEach(function(element){
+//			element.addEventListener("mousemove",mouseMove);
+//		});
+	element.addEventListener("mouseup",disableDragging);
 });
+
+//		element.classList.remove("dragging");
+//		element.style.left= "initial";
+//		element.style.top= "initial";
+//		//element.removeEventListener("mousemove",mouseMove);
+//		articles.forEach(function(element){
+//			element.removeEventListener("mousemove",mouseMove);
+//		});
+//	});
+//});
