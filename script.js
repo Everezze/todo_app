@@ -14,6 +14,8 @@ const main = document.querySelector("main");
 const secondAside = document.querySelector("main > asidel");
 
 let preventClick = false;
+let prevArticle = "";
+let usedDragging = false;
 
 function addActive(element){
 	element.addEventListener("click",function(){
@@ -100,8 +102,6 @@ input.addEventListener("keydown",function(event){
 });
 
 const resObserv = new ResizeObserver(entries => {
-	//console.log("entered resize event");
-	//console.log(tasksSection.nextElementSibling);
 	for(let entry of entries){
 		if(entry.contentRect.width >= 652){
 			taskCompletedCleaner.parentElement.insertBefore(filterContainer,taskCompletedCleaner);
@@ -113,18 +113,12 @@ const resObserv = new ResizeObserver(entries => {
 });
 resObserv.observe(main);
 
-let prevArticle = "";
-let usedDragging = false;
 function mouseMove(e){
 	let elementStyles = window.getComputedStyle(e.currentTarget);
 	let left = parseInt(elementStyles.left);
 	let top = parseInt(elementStyles.top);
 	e.currentTarget.style.left = `${left + e.movementX}px`;
 	e.currentTarget.style.top = `${top + e.movementY}px`;
-	//e.currentTarget.setAttribute("hidden",true);
-	//INSTEAD OF USING HIDDEN(DOESNT WORK FOR WHATEVER REAON), I CAN USE
-	//Z-INDEX=-1 OR VISIBILITY=NONE. TRY AND SEE WHICH ONE WORKS THE BEST.
-	//e.currentTarget.hidden=true;
 	e.currentTarget.classList.add("dragging");
 	if(e.target.tagName != "ARTICLE"){
 		preventClick = true;
@@ -149,8 +143,6 @@ function mouseMove(e){
 			prevArticle.style.margin = "0";
 			prevArticle = articleBelow;
 		}
-		//console.log("dragged el rect top : ", e.target.getBoundingClientRect().top);
-		//console.log("below el rect top : ", articleBelow.getBoundingClientRect().top);
 		let targetRect = e.target.getBoundingClientRect();
 		let belowElRect = articleBelow.getBoundingClientRect();
 		if(targetRect.top <= belowElRect.top + belowElRect.height * .10){
@@ -165,8 +157,6 @@ function mouseMove(e){
 	if(!usedDragging){
 		usedDragging=true;
 	}
-	//console.log("X: ",e.clientX,"Y: ",e.clientY);
-	//e.stopPropagation();
 }
 
 function enableDragging(e){
@@ -174,14 +164,11 @@ function enableDragging(e){
 };
 
 function disableDragging(e){
-	console.log(prevArticle.style.marginBottom);
 	if(usedDragging){
 		if(prevArticle.style.marginTop != "0px"){
-			console.log("inserting before prevArticle!!!")
 			tasksSection.insertBefore(e.currentTarget,prevArticle);
 		}
 		else if(prevArticle.style.marginBottom != "0px"){
-			console.log("inserting after prevArticle...");
 			tasksSection.insertBefore(e.currentTarget,prevArticle.nextElementSibling);
 		}
 		prevArticle.style.margin = "0";
@@ -194,22 +181,5 @@ function disableDragging(e){
 
 articles.forEach(function(element){
 	element.addEventListener("mousedown",enableDragging);
-//		//e.stopPropagation();
-//		console.log(e.currentTarget);
-//		console.log(element);
-//		element.classList.add("dragging");
-//		articles.forEach(function(element){
-//			element.addEventListener("mousemove",mouseMove);
-//		});
 	element.addEventListener("mouseup",disableDragging);
 });
-
-//		element.classList.remove("dragging");
-//		element.style.left= "initial";
-//		element.style.top= "initial";
-//		//element.removeEventListener("mousemove",mouseMove);
-//		articles.forEach(function(element){
-//			element.removeEventListener("mousemove",mouseMove);
-//		});
-//	});
-//});
