@@ -129,6 +129,7 @@ input{
 	background: var(--article-bg);
 	font-size: 1.2rem;
 	padding: 0;
+	flex-grow: 1;
 }
 
 input::placeholder{
@@ -142,6 +143,8 @@ section>*+*{
 article{
 	transition: margin .20s ease-in;
 	color: var(--article-fg);
+	position: relative;
+	z-index: 0;
 }
 
 article,aside span:not(.non-clickable){
@@ -194,6 +197,25 @@ header{
 	margin-right: .75rem;
 	position: relative;
 	flex-shrink: 0;
+	background-clip: padding-box;
+	background: var(--article-bg);
+}
+
+.circle:hover{
+	border: 1px solid transparent;
+}
+
+.circle::before{
+	content: "";
+	position: absolute;
+	top: -1px;
+	bottom: -1px;
+	left: -1px;
+	right: -1px;
+	border-radius: 50%;
+	background: var(--gradient-bp);
+	/*margin: -1px;*/
+	z-index: -1;
 }
 
 /*.circle:hover{
@@ -233,7 +255,7 @@ article.active span{
 
 article.dragging{
 	position: absolute;
-	/*z-index: 1;*/
+	z-index: 1;
 	width:100%;
 	background: lavender;
 	cursor: grabbing;

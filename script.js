@@ -28,7 +28,6 @@ function changeTheme(e){
 	else{
 		e.currentTarget.setAttribute("src","images/icon-sun.svg");
 	}
-	console.log("change theme element: ",e.currentTarget);
 };
 
 function addActive(element){
@@ -138,12 +137,12 @@ const resObserv = new ResizeObserver(entries => {
 resObserv.observe(main);
 
 function mouseMove(e){
+	e.currentTarget.classList.add("dragging");
 	let elementStyles = window.getComputedStyle(e.currentTarget);
 	let left = parseInt(elementStyles.left);
 	let top = parseInt(elementStyles.top);
 	e.currentTarget.style.left = `${left + e.movementX}px`;
 	e.currentTarget.style.top = `${top + e.movementY}px`;
-	e.currentTarget.classList.add("dragging");
 	if(e.target.tagName != "ARTICLE"){
 		preventClick = true;
 	};
