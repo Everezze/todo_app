@@ -12,10 +12,24 @@ const articles = Array.from(document.querySelectorAll("section article"));
 const input = document.querySelector("input");
 const main = document.querySelector("main");
 const secondAside = document.querySelector("main > asidel");
+const themeSwitcher = document.querySelector("header>img");
+const body = document.querySelector("body");
 
 let preventClick = false;
 let prevArticle = "";
 let usedDragging = false;
+
+
+function changeTheme(e){
+	body.classList.toggle("dark-theme");
+	if(body.classList.contains("dark-theme")){
+		e.currentTarget.setAttribute("src","images/icon-moon.svg");
+	}
+	else{
+		e.currentTarget.setAttribute("src","images/icon-sun.svg");
+	}
+	console.log("change theme element: ",e.currentTarget);
+};
 
 function addActive(element){
 	element.addEventListener("click",function(){
@@ -28,19 +42,28 @@ function addActive(element){
 	});
 };
 
-function enableActiveFilter(){
+function enableActiveFilter(e){
 	tasksSection.classList.toggle("active-filter");
 	tasksSection.classList.remove("completed-filter");
+	e.currentTarget.classList.toggle("active");
+	allFilter.classList.remove("active");
+	completedFilter.classList.remove("active");
 };
 
-function enableCompletedFilter(){
+function enableCompletedFilter(e){
 	tasksSection.classList.toggle("completed-filter");
 	tasksSection.classList.remove("active-filter");
+	e.currentTarget.classList.toggle("active");
+	allFilter.classList.remove("active");
+	activeFilter.classList.remove("active");
 };
 
-function enableAllFilter(){
+function enableAllFilter(e){
 	tasksSection.classList.remove("completed-filter");
 	tasksSection.classList.remove("active-filter");
+	e.currentTarget.classList.add("active");
+	completedFilter.classList.remove("active");
+	activeFilter.classList.remove("active");
 };
 
 function enableRemoveArticle(element){
@@ -79,6 +102,7 @@ function createArticle(input){
 	return article;
 }
 
+themeSwitcher.addEventListener("click",changeTheme);
 marksAndTasks.forEach(addActive);
 taskCompletedCleaner.addEventListener("click",function(){
 	for(let i =0;i<articles.length;i++){
