@@ -134,7 +134,8 @@ function mouseMove(e){
 	if(articleBelow.tagName == "SPAN" || articleBelow.tagName == "IMG" || articleBelow.tagName == "DIV"){
 		articleBelow = articleBelow.parentElement;
 	};
-	if(e.target.tagName == "ARTICLE" && articleBelow.tagName == "ARTICLE"){
+
+	if(e.currentTarget.tagName == "ARTICLE" && articleBelow.tagName == "ARTICLE"){
 		if(!prevArticle){
 			prevArticle = articleBelow;
 			console.log("prev article added first time :",prevArticle);
@@ -143,7 +144,7 @@ function mouseMove(e){
 			prevArticle.style.margin = "0";
 			prevArticle = articleBelow;
 		}
-		let targetRect = e.target.getBoundingClientRect();
+		let targetRect = e.currentTarget.getBoundingClientRect();
 		let belowElRect = articleBelow.getBoundingClientRect();
 		if(targetRect.top <= belowElRect.top + belowElRect.height * .10){
 			articleBelow.style.marginTop = `${targetRect.height}px`;
@@ -172,11 +173,13 @@ function disableDragging(e){
 			tasksSection.insertBefore(e.currentTarget,prevArticle.nextElementSibling);
 		}
 		prevArticle.style.margin = "0";
-		e.currentTarget.classList.remove("dragging");
-		e.currentTarget.style.left="initial";
-		e.currentTarget.style.top="initial";
-		e.currentTarget.removeEventListener("mousemove",mouseMove);
 	}
+	e.currentTarget.classList.remove("dragging");
+	e.currentTarget.style.left="initial";
+	e.currentTarget.style.top="initial";
+	e.currentTarget.removeEventListener("mousemove",mouseMove);
+	prevArticle = "";
+	usedDragging = false;
 };
 
 articles.forEach(function(element){
