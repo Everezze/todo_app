@@ -201,8 +201,8 @@ header{
 	background: var(--article-bg);
 }
 
-.circle:hover{
-	border: 1px solid transparent;
+article:not(.active) .circle:hover{
+	border: none;
 }
 
 .circle::before{
@@ -257,7 +257,7 @@ article.dragging{
 	position: absolute;
 	z-index: 1;
 	width:100%;
-	background: lavender;
+	background: crimson;
 	cursor: grabbing;
 }
 

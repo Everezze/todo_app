@@ -8,12 +8,14 @@ const activeFilter = document.querySelector("main>aside div span:nth-child(2)");
 const completedFilter = document.querySelector("main>aside div span:nth-child(3)");
 const allFilter = document.querySelector("main>aside div span:nth-child(1)");
 const tasksSection = document.querySelector("section");
-const articles = Array.from(document.querySelectorAll("section article"));
+let articles = Array.from(document.querySelectorAll("section article"));
+let articlesLength = articles.length;
 const input = document.querySelector("input");
 const main = document.querySelector("main");
 const secondAside = document.querySelector("main > asidel");
 const themeSwitcher = document.querySelector("header>img");
 const body = document.querySelector("body");
+const itemsLeft = document.querySelector(".items-left");
 
 let preventClick = false;
 let prevArticle = "";
@@ -47,14 +49,27 @@ function enableActiveFilter(e){
 	e.currentTarget.classList.toggle("active");
 	allFilter.classList.remove("active");
 	completedFilter.classList.remove("active");
+
+	if(!tasksSection.classList.contains("active-filter")){
+		allFilter.classList.add("active");
+	}
+	else{
+		allFilter.classList.remove("active");
+	}
 };
 
 function enableCompletedFilter(e){
 	tasksSection.classList.toggle("completed-filter");
 	tasksSection.classList.remove("active-filter");
 	e.currentTarget.classList.toggle("active");
-	allFilter.classList.remove("active");
 	activeFilter.classList.remove("active");
+
+	if(!tasksSection.classList.contains("completed-filter")){
+		allFilter.classList.add("active");
+	}
+	else{
+		allFilter.classList.remove("active");
+	}
 };
 
 function enableAllFilter(e){
@@ -71,8 +86,11 @@ function enableRemoveArticle(element){
 			preventClick=false;
 			return;
 		}
+		console.log("removing...");
 		let articleToRemove = this.parentElement;
 		articleToRemove.parentElement.removeChild(articleToRemove);
+		articlesLength -=1;
+		itemsLeft.textContent = `${articlesLength} items left`;
 	});
 };
 
@@ -104,12 +122,15 @@ function createArticle(input){
 themeSwitcher.addEventListener("click",changeTheme);
 marksAndTasks.forEach(addActive);
 taskCompletedCleaner.addEventListener("click",function(){
-	for(let i =0;i<articles.length;i++){
-		if(articles[i].classList.contains("active")){
-			let articleToRemove= articles[i];
-			articleToRemove.parentElement.removeChild(articleToRemove);
+	articles = articles.filter(element => {
+		if(element.classList.contains("active")){
+			element.parentElement.removeChild(element);
+			articlesLength -=1;
+			return false;
 		}
-	}
+		return true;
+	});
+	itemsLeft.textContent = `${articlesLength} items left`;
 });
 activeFilter.addEventListener("click", enableActiveFilter);
 completedFilter.addEventListener("click", enableCompletedFilter);
@@ -121,7 +142,9 @@ input.addEventListener("keydown",function(event){
 		let article = createArticle(this);
 		tasksSection.insertBefore(article,taskCompletedCleaner.parentElement);
 		this.value = "";
+		articlesLength +=1;
 	}
+	itemsLeft.textContent = `${articlesLength} items left`;
 });
 
 const resObserv = new ResizeObserver(entries => {
