@@ -16,6 +16,8 @@ const secondAside = document.querySelector("main > asidel");
 const themeSwitcher = document.querySelector("header>img");
 const body = document.querySelector("body");
 const itemsLeft = document.querySelector(".items-left");
+const deskBg = document.querySelector(".desk-bg");
+const mobileBg = document.querySelector(".mobile-bg");
 
 let preventClick = false;
 let prevArticle = "";
@@ -26,9 +28,13 @@ function changeTheme(e){
 	body.classList.toggle("dark-theme");
 	if(body.classList.contains("dark-theme")){
 		e.currentTarget.setAttribute("src","images/icon-moon.svg");
+		deskBg.setAttribute("src","images/bg-desktop-dark.jpg");
+		mobileBg.setAttribute("srcset","images/bg-mobile-dark.jpg");
 	}
 	else{
 		e.currentTarget.setAttribute("src","images/icon-sun.svg");
+		deskBg.setAttribute("src","images/bg-desktop-light.jpg");
+		mobileBg.setAttribute("srcset","images/bg-mobile-light.jpg");
 	}
 };
 
