@@ -257,8 +257,9 @@ article.dragging{
 	position: absolute;
 	z-index: 1;
 	width:100%;
-	background: crimson;
+	/*background: crimson;*/
 	cursor: grabbing;
+	outline: 1px solid orange;
 }
 
 @media screen and (min-width:700px) {
